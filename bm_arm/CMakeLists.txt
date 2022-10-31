@@ -4,6 +4,20 @@ include("arm.cmake")
 project(main C)
 set(MY_EXEC "program")
 
+#corrosion
+include(FetchContent)
+FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG v0.2.2
+)
+set(Rust_CARGO_TARGET thumbv7m-none-eabi)
+FetchContent_MakeAvailable(Corrosion)
+
+#include dirs
+include_directories (${CMAKE_BINARY_DIR}/cargo/build/thumbv7m-none-eabi/cxxbridge/rust_side/src/)
+
+#general
 add_executable(${MY_EXEC} main.cpp start.s)
 set_target_properties(${MY_EXEC} PROPERTIES OUTPUT_NAME "app.elf")
 set(ASMFILES start.s)
@@ -14,12 +28,25 @@ target_compile_options(${MY_EXEC} PRIVATE
     "-mcpu=arm926ej-s"
      )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm926ej-s -g -nostartfiles -nostdlib -g -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm926ej-s -g -nostartfiles -nostdlib -g -Wall -fno-exceptions")
 
 #linker
 set(LINKER_SCRIPT "linker.ld")
 set_target_properties(${MY_EXEC} PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${LINKER_SCRIPT})
 target_link_options(${MY_EXEC} PRIVATE "-T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld")
+
+#rust stuff
+corrosion_import_crate(MANIFEST_PATH rust_side/Cargo.toml
+                       NO_STD
+                       PROFILE release
+                      )
+corrosion_add_target_rustflags(rust_side --cfg cxx_experimental_no_alloc)                   
+target_link_libraries(${MY_EXEC}
+  PUBLIC
+  -nostartfiles
+  -nostdlib
+  rust_side
+)
 
 #objcopy elf->bin
 set(CMAKE_OBJCOPY "arm-none-eabi-objcopy")
