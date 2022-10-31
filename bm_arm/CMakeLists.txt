@@ -1,33 +1,33 @@
 cmake_minimum_required(VERSION 3.16)
+include("arm.cmake")
 
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR arm)
-set(CMAKE_CROSSCOMPILING TRUE)
+project(main C)
+set(MY_EXEC "program")
 
-
-project (bm_arm C ASM)
-
-
-set(CMAKE_C_COMPILER "arm-none-eabi-gcc")
-set(CMAKE_ASM_COMPILER "arm-none-eabi-as")
-set(CMAKE_OBJCOPY "arm-none-eabi-objcopy")
-
-file(GLOB LINKSCRIPT "linker.ld")
+add_executable(${MY_EXEC} main.cpp start.s)
+set_target_properties(${MY_EXEC} PROPERTIES OUTPUT_NAME "app.elf")
 set(ASMFILES start.s)
-set(SRCLIST main.c)
+set(SRCLIST main.cpp)
+
+#compiler
+target_compile_options(${MY_EXEC} PRIVATE  
+    "-mcpu=arm926ej-s"
+     )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm926ej-s -g -nostartfiles -nostdlib -g -Wall")
-set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKSCRIPT}")
-set(ASMFLAGS "-mcpu=arm926ej-s -g")
 
-add_executable(bm_arm ${SRCLIST} ${ASMFILES})
-set_target_properties(bm_arm PROPERTIES OUTPUT_NAME "bm_arm.elf")
+#linker
+set(LINKER_SCRIPT "linker.ld")
+set_target_properties(${MY_EXEC} PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${LINKER_SCRIPT})
+target_link_options(${MY_EXEC} PRIVATE "-T${CMAKE_CURRENT_SOURCE_DIR}/linker.ld")
 
+#objcopy elf->bin
+set(CMAKE_OBJCOPY "arm-none-eabi-objcopy")
+add_custom_command(TARGET ${MY_EXEC} POST_BUILD COMMAND ${CMAKE_OBJCOPY}
+    -O binary app.elf app.bin COMMENT "Converting ELF to binary")
 
-add_custom_command(TARGET bm_arm POST_BUILD COMMAND ${CMAKE_OBJCOPY}
-    -O binary bm_arm.elf bm_arm.bin COMMENT "Converting ELF to binary")
-
+#runner
 add_custom_target(run)
 add_custom_command(TARGET run POST_BUILD COMMAND 
-                  qemu-system-arm -M versatilepb -m 128M -nographic -kernel bm_arm.bin
+                  qemu-system-arm -M versatilepb -m 128M -nographic -kernel app.bin
                   COMMENT "Running QEMU...")

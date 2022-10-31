@@ -7,7 +7,7 @@ void print_uart0(const char *s) {
     }
 }
 
-
+extern "C"
 void c_entry() {
     print_uart0("Hello world!\n");
 }
