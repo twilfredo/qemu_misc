@@ -23,7 +23,7 @@ extern "C"
 void c_entry() {
     print_uart0("START\n");
     if (hook_c(10) == 10*10) {
-        print_uart0("Hello world!\n");
+        print_uart0("hook_c assertion [ok]\n");
     }
     //test_build_token();
 }

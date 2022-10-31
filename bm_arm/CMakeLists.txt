@@ -11,11 +11,11 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
     GIT_TAG v0.2.2
 )
-set(Rust_CARGO_TARGET thumbv7m-none-eabi)
+set(Rust_CARGO_TARGET "armv5te-unknown-linux-gnueabi")
 FetchContent_MakeAvailable(Corrosion)
 
 #include dirs
-include_directories (${CMAKE_BINARY_DIR}/cargo/build/thumbv7m-none-eabi/cxxbridge/rust_side/src/)
+include_directories (${CMAKE_BINARY_DIR}/cargo/build/armv5te-unknown-linux-gnueabi/cxxbridge/rust_side/src/)
 
 #general
 add_executable(${MY_EXEC} main.cpp start.s)
