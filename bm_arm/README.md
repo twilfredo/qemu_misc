@@ -24,5 +24,5 @@ $ make run
 
 To quit the qemu-session:
 ```
-Press `alt + a`, then `x`
+Press `ctrl + a`, then `x`
 ```
