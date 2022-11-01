@@ -1,0 +1,27 @@
+[package]
+name = "rust_side"
+version = "0.1.0"
+authors = ["Wilfred MK <wilfred.mallawa@wdc.com>"]
+edition = "2021"
+
+[dependencies]
+cxx = { path = "/home/twilfred/wdc/cxx_dvl/cxx/", default-features = false }
+
+[build-dependencies]
+cxx-build = { path = "/home/twilfred/wdc/cxx_dvl/cxx/gen/build", features = ["build_nostd"] }
+
+[lib]
+crate-type = ["staticlib"]
+
+[profile.dev]
+panic = "abort"
+lto = false
+opt-level = "z"
+debug = true
+
+[profile.release]
+panic = "abort"
+lto = true
+opt-level = "z"
+debug = true
+codegen-units = 1
