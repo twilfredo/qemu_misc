@@ -9,6 +9,11 @@ void print_uart0(const char *s) {
     }
 }
 
+long int cpp_hook_a() {
+    print_uart0("cpp_callback_from_rust: [ok]\n");
+    return 1313;
+}
+
 int test_build_token(void)
 {
 	long int index = 0;
@@ -53,6 +58,11 @@ void c_entry() {
         print_uart0("test_build_token [fail]\n");
     }
 
+    if (rs_ping_cpp() == true) {
+        print_uart0("cpp_callback: magic num recvd [ok]\n");
+    } else {
+        print_uart0("cpp_callback: magic num inval [fail]\n");
+    }
     print_uart0("END TEST\n");
 }
 
@@ -60,3 +70,9 @@ void c_entry() {
 void __assert_func (const char *__a, int, const char *__b, const char *__c) {
 	while (true) {}
 }
+
+// This is missing in a free-standing environment
+// Purpose: this is used in the stack unwinding tables
+// since we aren't using exceptions. Disable them with `-fno-exceptions`
+// https://stackoverflow.com/questions/329059/what-is-gxx-personality-v0-for
+void *__gxx_personality_v0;
