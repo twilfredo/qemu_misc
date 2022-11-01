@@ -15,7 +15,11 @@ set(Rust_CARGO_TARGET "armv5te-unknown-linux-gnueabi")
 FetchContent_MakeAvailable(Corrosion)
 
 #include dirs
-include_directories (${CMAKE_BINARY_DIR}/cargo/build/armv5te-unknown-linux-gnueabi/cxxbridge/rust_side/src/)
+include_directories (${CMAKE_BINARY_DIR}/cargo/build/armv5te-unknown-linux-gnueabi/cxxbridge/rust_side/src/
+                     ${CMAKE_BINARY_DIR}/cargo/build/armv5te-unknown-linux-gnueabi/cxxbridge/rust/
+                     ${CMAKE_CURRENT_SOURCE_DIR}/
+                     ${CMAKE_CURRENT_SOURCE_DIR}/rust_side/src/
+                     )
 
 #general
 add_executable(${MY_EXEC} main.cpp start.s)

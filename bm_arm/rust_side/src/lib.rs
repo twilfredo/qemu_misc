@@ -3,8 +3,8 @@
 #[cxx::bridge]
 mod ffi {
     extern "Rust" {
-        fn hook_c(val: i32) -> i32;
-        fn build_token_array(buffer: &'static [u8], work_index: &mut i32) -> i32;
+        fn rs_hook_c(val: i32) -> i32;
+        fn rs_build_token_array(buffer: &'static [u8], work_index: &mut i32) -> i32;
     }
 }
 
@@ -12,17 +12,17 @@ pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
 
-pub fn hook_c(val: i32) -> i32 {
+pub fn rs_hook_c(val: i32) -> i32 {
     val.saturating_mul(10)
 }
 
-fn build_token_array(buffer: &'static [u8], work_index: &mut i32) -> i32 {
+fn rs_build_token_array(buffer: &'static [u8], work_index: &mut i32) -> i32 {
     let mut count = 0;
     for i in buffer {
         count += *i as i32;
     }
     *work_index = count;
-    0
+    -10
 }
 
 #[cfg(test)]
@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn test_hookc() {
-        assert_eq!(hook_c(10), 100);
+        assert_eq!(rs_hook_c(10), 100);
     }
 }
 
