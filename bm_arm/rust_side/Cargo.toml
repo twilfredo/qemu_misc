@@ -8,7 +8,7 @@ edition = "2021"
 cxx = { path = "/home/twilfred/wdc/cxx_dvl/cxx/", default-features = false }
 
 [build-dependencies]
-cxx-build = { path = "/home/twilfred/wdc/cxx_dvl/cxx/gen/build", features = ["build_nostd"] }
+cxx-build = { path = "/home/twilfred/wdc/cxx_dvl/cxx/gen/build", default-features = false }
 
 [lib]
 crate-type = ["staticlib"]
