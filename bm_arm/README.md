@@ -16,6 +16,8 @@ sudo apt-get install qemu-system-arm
 ```
 
 ```shell
+$ git clone https://github.com/twilfredo/qemu_misc.git
+$ cd qemu_misc
 $ mkdir build; cd build
 $ cmake ..; cmake --build .
 # Automatically load the exec binary as a kernel into qemu.
